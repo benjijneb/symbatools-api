@@ -10,16 +10,16 @@ exports.createUser = async (req, res) => {
     const db = new JsonDB(new Config("users", true, true, '/'))
 
     // check if everything is here (login/pwd)
-    if (!req.body.login || !req.body.password) {
+    if (!req.body.username || !req.body.password) {
         
         res.status(400)
-        res.json({"error": "missing login or password", "code": 1})
+        res.json({"error": "ERR_REG_1"})
     }
     // check if login is an email
-    else if (!validator.isEmail(req.body.login)) {
+    else if (!validator.isEmail(req.body.username)) {
 
         res.status(400)
-        res.json({"error": "user name is not a valid email", "code": 2})
+        res.json({"error": "ERR_REG_2"})
     }
     // send verification email
     else {
@@ -27,11 +27,11 @@ exports.createUser = async (req, res) => {
         // check if user already exist
         try {
 
-            let data = await db.getData("/" + req.body.login)
+            let data = await db.getData("/" + req.body.username)
             if (data) {
 
                 res.status(400)
-                res.json({"error": "user already exists: " + req.body.login, "code": 4})
+                res.json({"error": "ERR_REG_3"})
                 return
             }
         } catch(error) {
@@ -44,9 +44,7 @@ exports.createUser = async (req, res) => {
         const bd64ValidationInfo = Buffer.from(req.body.login + ":" + validationKey, 'utf-8').toString('base64')
         const hashedPwd = crypto.createHash('md5').update(req.body.password).digest('hex')
 
-        db.push("/" + req.body.login, {"login": req.body.login, "password": hashedPwd, "validationKey": validationKey, "date": Date.now()})
-        
-        console.log('user pushed to db')
+        db.push("/" + req.body.username, {"username": req.body.login, "password": hashedPwd, "validationKey": validationKey, "date": Date.now()})
 
         // create reusable transporter object using the default SMTP transport
         const transporter = nodemailer.createTransport({
@@ -62,7 +60,7 @@ exports.createUser = async (req, res) => {
         // send validation mail with validation info
         transporter.sendMail({
             from: 'gamemaster@symbaroum.fr',
-            to: req.body.login,
+            to: req.body.username,
             subject: "SymbaTools registration",
             text: "https://symbaroum.fr/users/inscription/validation/" + bd64ValidationInfo,
             html: "<p>Hello.</p><p>To finish your registration on https://symbaroum.fr, please follow this link :"
@@ -72,9 +70,9 @@ exports.createUser = async (req, res) => {
 
             if (err) {
                 res.status(500)
-                res.json({"error": "validation email couldn't be sent", "code": 3})
+                res.json({"error": "ERR_REG_4"})
             } else {
-                console.log('email sent')
+                
                 res.send("ok")
             }
         })
@@ -87,7 +85,7 @@ exports.validateUser = async (req, res) => {
     if (!req.params.validationInfo || !validator.isBase64(req.params.validationInfo)) {
 
         res.status(400)
-        res.json({"error": "validation information provided is not b64", "code": 1})
+        res.json({"error": "ERR_VAL_1"})
     } else {
 
         // get validation info and check if everything is in it
@@ -95,25 +93,25 @@ exports.validateUser = async (req, res) => {
         if (validationInfo.split(":").length != 2) {
 
             res.status(400)
-            res.json({"error": "validation information wrong format ", "code": 5})
+            res.json({"error": "ERR_VAL_5"})
         } else {
 
             // everything ok so open db
             const db = new JsonDB(new Config("users", true, true, '/'))
 
-            // now we get login and validationKey
-            let login = validationInfo.split(":")[0]
+            // now we get username and validationKey
+            let username = validationInfo.split(":")[0]
             let validationKey = validationInfo.split(":")[1]
 
             // check if user exists in db
             let data = {};
             try {
 
-                data = await db.getData("/" + login)
+                data = await db.getData("/" + username)
             } catch(error) {
 
                 res.status(400)
-                res.json({"error": "user does not exist: " + login, "code": 2})
+                res.json({"error": "ERR_VAL_2"})
                 return
             }
 
@@ -125,19 +123,19 @@ exports.validateUser = async (req, res) => {
                     
                     // update user (no validationKey)
                     delete data["validationKey"]
-                    db.push("/" + login, data)
+                    db.push("/" + username, data)
                     
                     // send welcome email
                     res.send("ok")
                 } else {
 
                     res.status(400)
-                    res.json({"error": "wrong validation key for user: " + login, "code": 3})
+                    res.json({"error": "ERR_VAL_3"})
                 }
             } else {
 
                 res.status(400)
-                res.json({"error": "user is already validated: " + login, "code": 4})
+                res.json({"error": "ERR_VAL_4"})
             }
         }
     }

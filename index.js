@@ -19,13 +19,12 @@ app.use(bodyParser.json());
 
 app.use(cors(corsOptions));*/
 
-app.use('/auth', authRouter)
-
 app.get('/', function(req, res){
-  
+
   res.send('SymbaTools API')
 })
 
+app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/json', pcNpcRouter)
 
