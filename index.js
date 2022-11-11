@@ -14,9 +14,9 @@ app.use(bodyParser.json());
 
 /*var corsOptions = {
   origin: '*'
-}*/
+}
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));*/
 app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/json', pcNpcRouter)
