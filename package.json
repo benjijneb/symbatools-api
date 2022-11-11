@@ -1,0 +1,23 @@
+{
+  "name": "symbatools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "node-json-db": "^2.1.3",
+    "nodemailer": "^6.8.0",
+    "passport": "^0.6.0",
+    "passport-json": "^1.2.0",
+    "passport-local": "^1.0.0",
+    "validator": "^13.7.0"
+  }
+}
