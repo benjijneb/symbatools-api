@@ -8,7 +8,7 @@ const cors = require('cors')
 const fs = require('fs')
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(bodyParser.json());
@@ -18,14 +18,12 @@ app.use(bodyParser.json());
 }
 
 app.use(cors(corsOptions));*/
+
 app.use('/auth', authRouter)
 
 app.get('/', function(req, res){
-    fs.readFile('index.html',function (err, data){
-      res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
-      res.write(data);
-      res.end();
-  })
+  
+  res.send('SymbaTools API')
 })
 
 app.use('/users', usersRouter)
