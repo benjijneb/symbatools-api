@@ -71,11 +71,11 @@ exports.createUser = async (req, res) => {
             if (err) {
                 res.status(500)
                 res.json({"error": "ERR_REG_4"})
-            } else {
-                
-                res.send("ok")
+                return
             }
         })
+
+        res.send("ok")
     }
 }
 
@@ -84,16 +84,14 @@ exports.validateUser = async (req, res) => {
     // validate base64 param
     if (!req.params.validationInfo || !validator.isBase64(req.params.validationInfo)) {
 
-        res.status(400)
-        res.json({"error": "ERR_VAL_1"})
+        res.send("Missing validation code.")
     } else {
 
         // get validation info and check if everything is in it
         let validationInfo = Buffer.from(req.params.validationInfo, 'base64').toString('utf-8')
         if (validationInfo.split(":").length != 2) {
 
-            res.status(400)
-            res.json({"error": "ERR_VAL_5"})
+            res.send("Wrong validation code format.")
         } else {
 
             // everything ok so open db
@@ -104,14 +102,13 @@ exports.validateUser = async (req, res) => {
             let validationKey = validationInfo.split(":")[1]
 
             // check if user exists in db
-            let data = {};
+            let data = {}
             try {
 
                 data = await db.getData("/" + username)
             } catch(error) {
 
-                res.status(400)
-                res.json({"error": "ERR_VAL_2"})
+                res.send("User does not exist.")
                 return
             }
 
@@ -126,23 +123,86 @@ exports.validateUser = async (req, res) => {
                     db.push("/" + username, data)
                     
                     // send welcome email
-                    res.send("ok")
+                    res.send("<html>Welcome ! You're now registered, please log in https://symbaroum.fr.</html>")
                 } else {
 
-                    res.status(400)
-                    res.json({"error": "ERR_VAL_3"})
+                    res.send("Wrong validation code.")
                 }
             } else {
 
-                res.status(400)
-                res.json({"error": "ERR_VAL_4"})
+                res.send("User already validated.")
             }
         }
     }
 }
 
-// TODO reset pwd
-exports.resetPassword = (req, res) => {
+exports.resetPassword = async (req, res) => {
 
+    let data = {}
+    try {
 
+        data = await db.getData("/" + req.body.username)
+    } catch(error) {
+
+        res.status(400)
+        res.json({"error": "ERR_LOG_1"})
+        return
+    }
+
+    const pwdResetToken = crypto.randomBytes(6).toString('hex')
+    data["pwdResetToken"] = pwdResetToken
+    db.push("/" + req.body.username, data)
+
+    // create reusable transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+        host: "smtp.ionos.fr",
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: "gamemaster@symbaroum.fr",
+            pass: "r+&sspCv-@h#7y!",
+        },
+    })
+
+    // send validation mail with validation info
+    transporter.sendMail({
+        from: 'gamemaster@symbaroum.fr',
+        to: req.body.username,
+        subject: "SymbaTools password reset",
+        text: pwdResetToken,
+        html: "<p>Hello.</p><p>Here is your Password Reset Token: " + pwdResetToken + "</p>"
+                + "<p>Best regards,<br/>The Game Master</p>"
+    }, function(err, info) {
+
+        if (err) {
+            res.status(500)
+            res.json({"error": "ERR_RES_1"})
+            return
+        }
+    })
+
+    res.send("ok")
+}
+
+exports.validateResetPassword = async (req, res) => {
+
+    let data = {}
+    try {
+
+        data = await db.getData("/" + req.body.username)
+    } catch(error) {
+
+        res.status(400)
+        res.json({"error": "ERR_LOG_1"})
+        return
+    }
+
+    if (data["pwdResetToken"] !== req.body.token) {
+
+        res.status(400)
+        res.json({"error": "ERR_RES_2"})
+    } else {
+
+        res.send("ok")
+    }
 }
