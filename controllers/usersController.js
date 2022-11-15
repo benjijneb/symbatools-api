@@ -138,6 +138,8 @@ exports.validateUser = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
 
+    const db = new JsonDB(new Config("users", true, true, '/'))
+
     let data = {}
     try {
 
@@ -186,6 +188,8 @@ exports.resetPassword = async (req, res) => {
 
 exports.validatePasswordReset = async (req, res) => {
 
+    const db = new JsonDB(new Config("users", true, true, '/'))
+
     let data = {}
     try {
 
@@ -209,6 +213,8 @@ exports.validatePasswordReset = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
 
+    const db = new JsonDB(new Config("users", true, true, '/'))
+    
     let data = {}
     try {
 
