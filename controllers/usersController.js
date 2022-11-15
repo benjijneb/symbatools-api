@@ -229,12 +229,14 @@ exports.changePassword = async (req, res) => {
     if (data["pwdResetToken"] != req.body.token) {
 
         res.status(400)
-        res.json({"error": "ERR_RES_2"})
+        res.json({"error": "ERR_API_1"})
+        return
     } else {
 
         const hashedPwd = crypto.createHash('md5').update(req.body.newPassword).digest('hex')
-        data["password"] = hashedPwd;
-        delete data["pwdResetToken"]
+        data["password"] = hashedPwd
         db.push("/" + req.body.username, data)
     }
+
+    res.send("ok")
 }
