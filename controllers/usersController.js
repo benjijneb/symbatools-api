@@ -151,7 +151,7 @@ exports.resetPassword = async (req, res) => {
         return
     }
 
-    const pwdResetToken = crypto.randomBytes(6).toString('hex')
+    const pwdResetToken = crypto.randomInt(100000, 999999)
     data["pwdResetToken"] = pwdResetToken
     db.push("/" + req.body.username, data)
 
@@ -171,7 +171,7 @@ exports.resetPassword = async (req, res) => {
         from: 'gamemaster@symbaroum.fr',
         to: req.body.username,
         subject: "SymbaTools password reset",
-        text: pwdResetToken,
+        text: "" + pwdResetToken,
         html: "<p>Hello.</p><p>Here is your Password Reset Token: " + pwdResetToken + "</p>"
                 + "<p>Best regards,<br/>The Game Master</p>"
     }, function(err, info) {
@@ -200,8 +200,8 @@ exports.validatePasswordReset = async (req, res) => {
         res.json({"error": "ERR_LOG_1"})
         return
     }
-
-    if (data["pwdResetToken"] !== req.params.token) {
+    
+    if (data["pwdResetToken"] != req.params.token) {
 
         res.status(400)
         res.json({"error": "ERR_RES_2"})
@@ -214,7 +214,7 @@ exports.validatePasswordReset = async (req, res) => {
 exports.changePassword = async (req, res) => {
 
     const db = new JsonDB(new Config("users", true, true, '/'))
-    
+
     let data = {}
     try {
 
