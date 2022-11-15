@@ -226,7 +226,7 @@ exports.changePassword = async (req, res) => {
         return
     }
 
-    if (data["pwdResetToken"] !== req.body.token) {
+    if (data["pwdResetToken"] != req.body.token) {
 
         res.status(400)
         res.json({"error": "ERR_RES_2"})
