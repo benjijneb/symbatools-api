@@ -184,7 +184,30 @@ exports.resetPassword = async (req, res) => {
     res.send("ok")
 }
 
-exports.validateResetPassword = async (req, res) => {
+exports.validatePasswordReset = async (req, res) => {
+
+    let data = {}
+    try {
+
+        data = await db.getData("/" + req.body.username)
+    } catch(error) {
+
+        res.status(400)
+        res.json({"error": "ERR_LOG_1"})
+        return
+    }
+
+    if (data["pwdResetToken"] !== req.params.token) {
+
+        res.status(400)
+        res.json({"error": "ERR_RES_2"})
+    } else {
+
+        res.send("ok")
+    }
+}
+
+exports.changePassword = async (req, res) => {
 
     let data = {}
     try {
@@ -203,6 +226,9 @@ exports.validateResetPassword = async (req, res) => {
         res.json({"error": "ERR_RES_2"})
     } else {
 
-        res.send("ok")
+        const hashedPwd = crypto.createHash('md5').update(req.body.newPassword).digest('hex')
+        data["password"] = hashedPwd;
+        delete data["pwdResetToken"]
+        db.push("/" + req.body.username, data)
     }
 }
