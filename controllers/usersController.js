@@ -53,7 +53,7 @@ exports.createUser = async (req, res) => {
             secure: true, // true for 465, false for other ports
             auth: {
                 user: "gamemaster@symbaroum.fr",
-                pass: "r+&sspCv-@h#7y!",
+                pass: "!7+NR#C%SjbPHJdA39bZ=?!k&rtLTwkw",
             },
         })
 
@@ -162,7 +162,7 @@ exports.resetPassword = async (req, res) => {
         secure: true, // true for 465, false for other ports
         auth: {
             user: "gamemaster@symbaroum.fr",
-            pass: "r+&sspCv-@h#7y!",
+            pass: "!7+NR#C%SjbPHJdA39bZ=?!k&rtLTwkw",
         },
     })
 

@@ -4,6 +4,7 @@ const usersRouter = require('./routers/usersRouter')
 const pcNpcRouter = require('./routers/pcNpcRouter')
 const authRouter = require('./routers/authRouter')
 const session = require('express-session')
+var FileStore = require('session-file-store')(session);
 const cors = require('cors')
 const fs = require('fs')
 
@@ -12,6 +13,14 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(bodyParser.json());
+app.use(session({
+    store: new FileStore({ logFn: () => {} }),
+    secret: 'jE@n p3t!t qu! d@ns3 p0ur l3 r0y !l d@ns3',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 36000000 }
+  })
+);
 
 /*var corsOptions = {
   origin: '*'
