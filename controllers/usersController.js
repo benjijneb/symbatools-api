@@ -41,10 +41,10 @@ exports.createUser = async (req, res) => {
 
         // store user
         const validationKey = crypto.randomBytes(20).toString('hex')
-        const bd64ValidationInfo = Buffer.from(req.body.login + ":" + validationKey, 'utf-8').toString('base64')
+        const bd64ValidationInfo = Buffer.from(req.body.username + ":" + validationKey, 'utf-8').toString('base64')
         const hashedPwd = crypto.createHash('md5').update(req.body.password).digest('hex')
 
-        db.push("/" + req.body.username, {"username": req.body.login, "password": hashedPwd, "validationKey": validationKey, "date": Date.now()})
+        db.push("/" + req.body.username, {"username": req.body.username, "password": hashedPwd, "validationKey": validationKey, "date": Date.now()})
 
         // create reusable transporter object using the default SMTP transport
         const transporter = nodemailer.createTransport({
@@ -62,9 +62,9 @@ exports.createUser = async (req, res) => {
             from: process.env.EMAIL_USER,
             to: req.body.username,
             subject: "SymbaTools registration",
-            text: "https://symbaroum.fr/users/inscription/validation/" + bd64ValidationInfo,
+            text: "https://2bfrjmfehy.eu-west-1.awsapprunner.com//users/inscription/validation/" + bd64ValidationInfo,
             html: "<p>Hello.</p><p>To finish your registration on https://symbaroum.fr, please follow this link :"
-                    + "<br/>https://symbaroum.fr/users/inscription/validation/" + bd64ValidationInfo + "</p>"
+                    + "<br/>https://2bfrjmfehy.eu-west-1.awsapprunner.com/users/inscription/validation/" + bd64ValidationInfo + "</p>"
                     + "<p>Best regards,<br/>The Game Master</p>"
         }, function(err, info) {
 
