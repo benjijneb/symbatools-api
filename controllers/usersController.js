@@ -52,14 +52,14 @@ exports.createUser = async (req, res) => {
             port: 465,
             secure: true, // true for 465, false for other ports
             auth: {
-                user: "gamemaster@symbaroum.fr",
-                pass: "!7+NR#C%SjbPHJdA39bZ=?!k&rtLTwkw",
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PWD,
             },
         })
 
         // send validation mail with validation info
         transporter.sendMail({
-            from: 'gamemaster@symbaroum.fr',
+            from: process.env.EMAIL_USER,
             to: req.body.username,
             subject: "SymbaTools registration",
             text: "https://symbaroum.fr/users/inscription/validation/" + bd64ValidationInfo,
@@ -161,14 +161,14 @@ exports.resetPassword = async (req, res) => {
         port: 465,
         secure: true, // true for 465, false for other ports
         auth: {
-            user: "gamemaster@symbaroum.fr",
-            pass: "!7+NR#C%SjbPHJdA39bZ=?!k&rtLTwkw",
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PWD,
         },
     })
 
     // send validation mail with validation info
     transporter.sendMail({
-        from: 'gamemaster@symbaroum.fr',
+        from: process.env.EMAIL_USER,
         to: req.body.username,
         subject: "SymbaTools password reset",
         text: "" + pwdResetToken,

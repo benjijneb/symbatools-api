@@ -15,7 +15,7 @@ app.use(express.json())
 app.use(bodyParser.json());
 app.use(session({
     store: new FileStore({ logFn: () => {} }),
-    secret: 'jE@n p3t!t qu! d@ns3 p0ur l3 r0y !l d@ns3',
+    secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 36000000 }
