@@ -24,9 +24,7 @@ app.use(session({
   })
 );
 
-if (process.env.SYMBAPI_ENV == 'DEV') {
-  app.use(cors({ origin: ['http://127.0.0.1:5500'] }));
-}
+app.use(cors({ origin: ['http://127.0.0.1:5500'] }));
 
 app.get('/', function(req, res){
 
