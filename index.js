@@ -18,13 +18,11 @@ console.log(`Environment (PROD if empty): ${process.env.SYMBAPI_ENV}`)
 app.use(session({
     store: new FileStore((process.env.SYMBAPI_ENV == 'DEV') ? { logFn: () => {}, reapInterval: 30 } : {}),
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: false,
-    cookie: { maxAge: (process.env.SYMBAPI_ENV == 'DEV') ? 6000 : 36000000 }
+    saveUninitialized: true
   })
 );
 
-app.use(cors({ origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr'] }));
+app.use(cors({ origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr'], credentials: true }));
 
 app.get('/', function(req, res){
 
