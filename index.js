@@ -6,27 +6,27 @@ const authRouter = require('./routers/authRouter')
 const session = require('express-session')
 var FileStore = require('session-file-store')(session);
 const cors = require('cors')
-const fs = require('fs')
 
 const app = express()
 const port = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(bodyParser.json());
+
+console.log(`Environment (PROD if empty): ${process.env.SYMBAPI_ENV}`)
+
 app.use(session({
-    store: new FileStore({ logFn: () => {} }),
+    store: new FileStore((process.env.SYMBAPI_ENV == 'DEV') ? { logFn: () => {}, reapInterval: 30 } : {}),
     secret: process.env.SESSION_SECRET,
     resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: 36000000 }
+    saveUninitialized: false,
+    cookie: { maxAge: (process.env.SYMBAPI_ENV == 'DEV') ? 6000 : 36000000 }
   })
 );
 
-/*var corsOptions = {
-  origin: '*'
+if (process.env.SYMBAPI_ENV == 'DEV') {
+  app.use(cors({ origin: ['http://127.0.0.1:5500'] }));
 }
-
-app.use(cors(corsOptions));*/
 
 app.get('/', function(req, res){
 
