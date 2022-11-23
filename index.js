@@ -22,7 +22,7 @@ app.use(session({
   })
 );
 
-app.use(cors({ origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr'], credentials: true }));
+app.use(cors({ origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr/'], credentials: true }));
 
 app.get('/', function(req, res){
 
