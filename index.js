@@ -18,7 +18,8 @@ console.log(`Environment (PROD if empty): ${process.env.SYMBAPI_ENV}`)
 app.use(session({
     store: new FileStore((process.env.SYMBAPI_ENV == 'DEV') ? { logFn: () => {}, reapInterval: 30 } : {}),
     secret: process.env.SESSION_SECRET,
-    saveUninitialized: true
+    saveUninitialized: true,
+    resave: true
   })
 );
 
