@@ -13,13 +13,13 @@ exports.createUser = async (req, res) => {
     if (!req.body.username || !req.body.password) {
         
         res.status(400)
-        res.jsonp({"error": "ERR_REG_1"})
+        res.json({"error": "ERR_REG_1"})
     }
     // check if login is an email
     else if (!validator.isEmail(req.body.username)) {
 
         res.status(400)
-        res.jsonp({"error": "ERR_REG_2"})
+        res.json({"error": "ERR_REG_2"})
     }
     // send verification email
     else {
@@ -31,7 +31,7 @@ exports.createUser = async (req, res) => {
             if (data) {
 
                 res.status(400)
-                res.jsonp({"error": "ERR_REG_3"})
+                res.json({"error": "ERR_REG_3"})
                 return
             }
         } catch(error) {
@@ -70,12 +70,12 @@ exports.createUser = async (req, res) => {
 
             if (err) {
                 res.status(500)
-                res.jsonp({"error": "ERR_REG_4"})
+                res.json({"error": "ERR_REG_4"})
                 return
             }
         })
 
-        res.jsonp({"created": true})
+        res.json({"created": true})
     }
 }
 
@@ -147,7 +147,7 @@ exports.resetPassword = async (req, res) => {
     } catch(error) {
 
         res.status(400)
-        res.jsonp({"error": "ERR_LOG_1"})
+        res.json({"error": "ERR_LOG_1"})
         return
     }
 
@@ -178,7 +178,7 @@ exports.resetPassword = async (req, res) => {
 
         if (err) {
             res.status(500)
-            res.jsonp({"error": "ERR_RES_1"})
+            res.json({"error": "ERR_RES_1"})
             return
         }
     })
@@ -197,17 +197,17 @@ exports.validatePasswordReset = async (req, res) => {
     } catch(error) {
 
         res.status(400)
-        res.jsonp({"error": "ERR_LOG_1"})
+        res.json({"error": "ERR_LOG_1"})
         return
     }
     
     if (data["pwdResetToken"] != req.params.token) {
 
         res.status(400)
-        res.jsonp({"error": "ERR_RES_2"})
+        res.json({"error": "ERR_RES_2"})
     } else {
 
-        res.jsonp({ "validated": true }) 
+        res.json({ "validated": true }) 
     }
 }
 
@@ -222,14 +222,14 @@ exports.changePassword = async (req, res) => {
     } catch(error) {
 
         res.status(400)
-        res.jsonp({"error": "ERR_LOG_1"})
+        res.json({"error": "ERR_LOG_1"})
         return
     }
 
     if (data["pwdResetToken"] != req.body.token) {
 
         res.status(400)
-        res.jsonp({"error": "ERR_API_1"})
+        res.json({"error": "ERR_API_1"})
         return
     } else {
 
@@ -238,5 +238,5 @@ exports.changePassword = async (req, res) => {
         db.push("/" + req.body.username, data)
     }
 
-    res.jsonp({ "pwdChanged": true }) 
+    res.json({ "pwdChanged": true }) 
 }
