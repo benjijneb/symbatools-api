@@ -34,7 +34,8 @@ app.use(session({
 app.use(cors({
   origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr'],
   methods: ['POST', 'GET', 'OPTIONS'],
-  credentials: true
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Cookie']
 }));
 
 app.get('/', function(req, res){
