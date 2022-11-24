@@ -39,6 +39,8 @@ app.use(cors({
   exposedHeaders: ['Set-Cookie']
 }));
 
+app.enable('trust proxy');
+
 app.get('/', function(req, res){
 
   res.send('SymbaTools API')
