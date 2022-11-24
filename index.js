@@ -15,15 +15,27 @@ app.use(bodyParser.json());
 
 console.log(`Environment (PROD if empty): ${process.env.SYMBAPI_ENV}`)
 
+var fileStoreOptions = {};
+if ((process.env.SYMBAPI_ENV == 'DEV')) {
+  fileStoreOptions = { reapInterval: 30 }
+} else {
+  fileStoreOptions = { logFn: () => {} }
+}
+
 app.use(session({
-    store: new FileStore((process.env.SYMBAPI_ENV == 'DEV') ? { logFn: () => {}, reapInterval: 30 } : {}),
+    store: new FileStore(fileStoreOptions),
     secret: process.env.SESSION_SECRET,
     saveUninitialized: true,
-    resave: true
+    resave: true,
+    cookie: { secure: true, sameSite: 'none', httpOnly: false }
   })
 );
 
-app.use(cors({ origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr/'], credentials: true }));
+app.use(cors({
+  origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr'],
+  methods: ['POST', 'GET', 'OPTIONS'],
+  credentials: true
+}));
 
 app.get('/', function(req, res){
 
