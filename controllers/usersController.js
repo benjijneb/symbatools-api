@@ -6,6 +6,43 @@ const crypto = require('crypto')
 
 exports.createUser = async (req, res) => {
 
+    // check captcha
+
+    if (!req.body.reCaptchaV2) {
+
+        res.status(500)
+        res.json({"error": "NO BOT ALLOWED!"})
+        return
+    } else {
+
+        try {
+
+            const params = new URLSearchParams()
+            params.append('secret', process.env.SYMBAPI_RECAPTCHA_SECRET)
+            params.append('response', req.body.reCaptchaV2)
+            
+            const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                method: 'post',
+                body: params
+            })
+            const data = await response.json()
+            console.log(data)
+            if (!data.success) {
+
+                console.log(data)
+                res.status(500)
+                res.json({"error": "NO BOT ALLOWED!"})
+                return
+            }
+        } catch (error) {
+
+            console.log(error)
+            res.status(500)
+            res.json({"error": "NO BOT ALLOWED!"})
+            return
+        }
+    }
+
     // open db
     const db = new JsonDB(new Config("users", true, true, '/'))
 
@@ -62,9 +99,9 @@ exports.createUser = async (req, res) => {
             from: process.env.EMAIL_USER,
             to: req.body.username,
             subject: "SymbaTools registration",
-            text: "https://2bfrjmfehy.eu-west-1.awsapprunner.com//users/inscription/validation/" + bd64ValidationInfo,
+            text: "https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo,
             html: "<p>Hello.</p><p>To finish your registration on https://symbaroum.fr, please follow this link :"
-                    + "<br/>https://2bfrjmfehy.eu-west-1.awsapprunner.com/users/inscription/validation/" + bd64ValidationInfo + "</p>"
+                    + "<br/>https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo + "</p>"
                     + "<p>Best regards,<br/>The Game Master</p>"
         }, function(err, info) {
 
@@ -123,7 +160,7 @@ exports.validateUser = async (req, res) => {
                     db.push("/" + username, data)
                     
                     // send welcome email
-                    res.send("<html>Welcome ! You're now registered, please log in https://symbaroum.fr.</html>")
+                    res.send("<html>Welcome ! You're now registered, please log in on <a href=\"https://symbaroum.fr\">https://symbaroum.fr</a>.</html>")
                 } else {
 
                     res.send("Wrong validation code.")

@@ -8,7 +8,7 @@ var FileStore = require('session-file-store')(session);
 const cors = require('cors')
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 443
 
 app.use(express.json())
 app.use(bodyParser.json());
@@ -16,27 +16,41 @@ app.use(bodyParser.json());
 console.log(`Environment (PROD if empty): ${process.env.SYMBAPI_ENV}`)
 
 var fileStoreOptions = {};
-if ((process.env.SYMBAPI_ENV == 'DEV')) {
+if (process.env.SYMBAPI_ENV == 'DEV') {
   fileStoreOptions = { reapInterval: 30 }
 } else {
   fileStoreOptions = { logFn: () => {} }
 }
 
+var maxAgeMult = 10
+if (process.env.SYMBAPI_ENV == 'DEV') {
+  maxAgeMult = 1/2
+}
+
 app.use(session({
     store: new FileStore(fileStoreOptions),
     secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
+    saveUninitialized: false,
     resave: true,
-    cookie: { secure: true, sameSite: 'None', httpOnly: false, maxAge: 10 * 60 * 60 * 1000 }
+    cookie: {
+      secure: true,
+      sameSite: 'none',
+      httpOnly: true,
+      maxAge: maxAgeMult * 60 * 60 * 1000
+    }
   })
 );
 
+var origins = ['https://symbaroum.fr']
+if (process.env.SYMBAPI_ENV == 'DEV') {
+  origins.push('https://localhost:5500')
+}
+
 app.use(cors({
-  origin: ['http://127.0.0.1:5500', 'https://symbaroum.fr'],
+  origin: origins,
   methods: ['POST', 'GET', 'OPTIONS'],
   credentials: true,
-  allowedHeaders: ['Content-Type'],
-  exposedHeaders: ['Set-Cookie']
+  allowedHeaders: ['Content-Type']
 }));
 
 app.enable('trust proxy');
@@ -50,7 +64,34 @@ app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/json', pcNpcRouter)
 
-app.listen(port, () => {
+
+
+const https = require("https");
+const fs = require("fs");
+
+var options = {}
+if (process.env.SYMBAPI_ENV == 'DEV') {
+  options = {
+    key: fs.readFileSync('c:/data/server.key'),
+    cert: fs.readFileSync('c:/data/server.crt'),
+    passphrase: 'changeit'
+  }
+} else {
+  options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/symbatools-api.tk/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/symbatools-api.tk/fullchain.pem')
+  }
+}
+
+server = https.createServer(options, app);
+
+server.listen(port, () => {
   
-  console.log(`SymbaTools is now listening on port ${port}`)
+  console.log(`SymbaTools API is now listening on https on port ${port}`)
 })
+
+  
+/*app.listen(port, () => {
+  
+  console.log(`SymbaTools API is now listening on port ${port}`)
+})*/

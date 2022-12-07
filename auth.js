@@ -2,7 +2,7 @@ const {JsonDB, Config} = require('node-json-db')
 const crypto = require('crypto')
 
 var auth = async (req, res, next) => {
-    
+    console.log(req.session.username)
     if (req.session == null || req.session.username == null) {
         
         if (req.body.username == null || req.body.username == null) {
