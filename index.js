@@ -42,9 +42,7 @@ app.use(session({
 );
 
 var origins = ['https://symbaroum.fr']
-if (process.env.SYMBAPI_ENV == 'DEV') {
-  origins.push('https://localhost:5500')
-}
+//origins.push('https://localhost:5500')
 
 app.use(cors({
   origin: origins,
