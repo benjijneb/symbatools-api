@@ -22,7 +22,7 @@ if (process.env.SYMBAPI_ENV == 'DEV') {
   fileStoreOptions = { logFn: () => {} }
 }
 
-var maxAgeMult = 10
+var maxAgeMult = 720 //h
 if (process.env.SYMBAPI_ENV == 'DEV') {
   maxAgeMult = 1/2
 }
