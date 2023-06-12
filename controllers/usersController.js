@@ -101,7 +101,8 @@ exports.createUser = async (req, res) => {
             subject: "SymbaTools registration",
             text: "https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo,
             html: "<p>Hello.</p><p>To finish your registration on https://symbaroum.fr, please follow this link :"
-                    + "<br/>https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo + "</p>"
+                    + "<br/><a href='https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo + "'>"
+                    + "https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo + "</a></p>"
                     + "<p>Best regards,<br/>The Game Master</p>"
         }, function(err, info) {
 
