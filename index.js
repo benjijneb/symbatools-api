@@ -76,8 +76,8 @@ if (process.env.SYMBAPI_ENV == 'DEV') {
   }
 } else {
   options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/symbatools-api.tk/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/symbatools-api.tk/fullchain.pem')
+    key: fs.readFileSync('/etc/letsencrypt/live/symbatools-api.ovh/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/symbatools-api.ovh/fullchain.pem')
   }
 }
 
