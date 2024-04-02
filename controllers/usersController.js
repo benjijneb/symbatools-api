@@ -99,10 +99,10 @@ exports.createUser = async (req, res) => {
             from: process.env.EMAIL_USER,
             to: req.body.username,
             subject: "SymbaTools registration",
-            text: "https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo,
+            text: "https://symbatools-api.ovh/users/inscription/validation/" + bd64ValidationInfo,
             html: "<p>Hello.</p><p>To finish your registration on https://symbaroum.fr, please follow this link :"
-                    + "<br/><a href='https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo + "'>"
-                    + "https://symbatools-api.tk/users/inscription/validation/" + bd64ValidationInfo + "</a></p>"
+                    + "<br/><a href='https://symbatools-api.ovh/users/inscription/validation/" + bd64ValidationInfo + "'>"
+                    + "https://symbatools-api.ovh/users/inscription/validation/" + bd64ValidationInfo + "</a></p>"
                     + "<p>Best regards,<br/>The Game Master</p>"
         }, function(err, info) {
 
